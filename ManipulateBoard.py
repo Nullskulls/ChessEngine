@@ -6,7 +6,9 @@ import json
 def create_board(file_name = "board.json"):
     #initizalize the board
     board = [
-        "undecided"
+        ["r", "n", "b", "q", "k", "b", "n", "r"],
+        ["p", "p", "p", "p", "p", "p", "p", "p"],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
     ]
     try:
         #open file
@@ -35,8 +37,18 @@ def read_board(file_name = "board.json"):
         return read_board(file_name)
 
 
+"""
+        This function returns the piece at the given coordinates
+"""
+def get_piece(board, x, y):
+    if x < 0 or y < 0 or x >= len(board) or y >= len(board[0]):
+        return None
+    return board[x][y]
+
+
 if __name__ == "__main__":
     #quick test
     if create_board():
         print("Board created")
     print(read_board())
+    print(get_piece(read_board(), 0, 0))
