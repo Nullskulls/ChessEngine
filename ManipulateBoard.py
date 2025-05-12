@@ -9,6 +9,11 @@ def create_board(file_name = "board.json"):
         ["r", "n", "b", "q", "k", "b", "n", "r"],
         ["p", "p", "p", "p", "p", "p", "p", "p"],
         [" ", " ", " ", " ", " ", " ", " ", " "],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
+        ["P", "P", "P", "P", "P", "P", "P", "P"],
+        ["R", "N", "B", "Q", "K", "B", "N", "R"]
     ]
     try:
         #open file
@@ -33,17 +38,26 @@ def read_board(file_name = "board.json"):
     except FileNotFoundError:
         #in case of failure creates board
         print("Board not found.")
-        create_board()
-        return read_board(file_name)
+        #if board is created returns the board
+        if create_board():
+            return read_board(file_name)
+        else:
+            #otherwise raise an exception to avoid recursive loop
+            raise Exception("Failed to create board")
 
 
 """
         This function returns the piece at the given coordinates
 """
-def get_piece(board, x, y):
-    if x < 0 or y < 0 or x >= len(board) or y >= len(board[0]):
-        return None
-    return board[x][y]
+def get_piece(board, row, col):
+    #check if board and coordinates are present
+    if board and row and col:
+        #check if coordinates are valid
+        if row < 0 or col < 0 or row >= len(board) or col >= len(board[0]):
+            return None
+        return board[row][col]
+    else:
+        raise Exception("Invalid coordinates")
 
 
 if __name__ == "__main__":
