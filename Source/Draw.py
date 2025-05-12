@@ -18,6 +18,5 @@ if __name__ == "__main__":
         ["a", "b", "c"],
         ["d", "e", "f"],
     ]
-    draw(board_demo, orientation="White")
     draw(board_demo, orientation="Black")
-    draw(orientation="White")
+
