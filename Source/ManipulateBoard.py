@@ -1,5 +1,6 @@
 import json
 import sys
+import Converter
 
 """
     This function initializes the chess board and saves it to a desired file
@@ -58,7 +59,7 @@ def read_board(file_name = "board.json"):
 
 
 """
-        This function returns the piece at the given coordinates
+    This function returns the piece at the given coordinates
 """
 def get_piece(board, row, col):
     #check if board and coordinates are present
@@ -69,6 +70,42 @@ def get_piece(board, row, col):
         return board[row][col]
     else:
         raise Exception("Invalid coordinates")
+"""
+    this function simply writes the piece to the board at the given coordinates
+"""
+def set_piece(move, board, piece):
+    #Check if args are present
+    if move is not None and board is not None and piece is not None:
+        board[move[0]][move[1]] = piece
+        return board
+    else:
+        raise Exception("Invalid arguments")
+
+"""
+    Placeholder function to check if the board is valid
+"""
+def is_valid(move, piece):
+    return True
+
+"""
+    Handles piece movement a1xa3
+"""
+def move_piece(move, board, orientation):
+    #check if all arguments are present
+    if move is not None and board is not None and orientation is not None:
+        starting_position = Converter.to_number(move[0:2], orientation)
+        ending_position = Converter.to_number(move[3:5], orientation)
+        piece = get_piece(board, starting_position[0], starting_position[1])
+
+        if is_valid(move, piece):
+            board = set_piece(starting_position, board, '#')
+            board = set_piece(ending_position, board, piece)
+            return board
+        else:
+            print("Invalid move")
+            return board
+    else:
+        raise Exception("Invalid arguments")
 
 
 if __name__ == "__main__":
