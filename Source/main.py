@@ -1,3 +1,4 @@
+import os
 import Converter, Draw, ManipulateBoard
 
 def main():
@@ -13,6 +14,7 @@ def main():
         Draw.draw(board, orientation)
         move = input("Please enter a move: ")
         board = ManipulateBoard.move_piece(move ,board, orientation)
+        os.system("cls" if os.name == "nt" else "clear")
         Draw.draw(board, orientation)
         x = x*-1
 
