@@ -62,7 +62,7 @@ def read_board(file_name = "board.json"):
 """
 def get_piece(board, row, col):
     #check if board and coordinates are present
-    if board and row and col:
+    if board is not None and row is not None and col is not None:
         #check if coordinates are valid
         if row < 0 or col < 0 or row >= len(board) or col >= len(board[0]):
             return None
