@@ -1,4 +1,5 @@
 import json
+import sys
 
 """
     This function initializes the chess board and saves it to a desired file
@@ -40,10 +41,20 @@ def read_board(file_name = "board.json"):
         print("Board not found.")
         #if board is created returns the board
         if create_board():
-            return read_board(file_name)
+            try:
+                with open(file_name, "r") as file:
+                    return json.loads(file.read())
+
+            except Exception as error:
+                print(f"Unexpected error occurred whilst creating your board: {error}")
+                sys.exit()
         else:
             #otherwise raise an exception to avoid recursive loop
             raise Exception("Failed to create board")
+
+    except Exception as error:
+        print(f"Unexpected error occurred: {error}")
+        sys.exit()
 
 
 """
