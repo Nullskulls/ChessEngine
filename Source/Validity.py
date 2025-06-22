@@ -18,9 +18,10 @@ def is_valid(piece, move, orientation, board):
         return True
     elif piece.lower() == "r":
         return is_valid_rook(move=move, orientation=orientation, board=board)
-    elif piece == "b":
-        return True
-    return True
+    elif piece.lower() == "b":
+        if is_valid_bishop(move=move, orientation=orientation, board=board):
+            return True
+    return False
 
 """
 Checks if pawn is eligible for promotion upon next movement. 
@@ -172,3 +173,46 @@ def is_valid_vertical(move, orientation, board, valid_moves):
                 holder = (holder[0] + direction_to_move, holder[1])
     return valid_moves
 
+def is_valid_bishop(move, orientation, board):
+    valid_moves = is_valid_diagonal(move=move, orientation=orientation, board=board, valid_moves=[])
+    if to_number(move[3:5]) in valid_moves:
+        return True
+    return False
+
+def is_valid_diagonal(move, orientation, board, valid_moves):
+    from Source.ManipulateBoard import get_piece
+    start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
+    direction_to_move = 1
+    side_to_move = 1
+    for _ in range(2):
+        side_to_move *= -1
+        for _ in range(2):
+            holder = start_pos
+            direction_to_move *= -1
+            holder = (holder[0] + direction_to_move, holder[1]+side_to_move)
+            captured = get_piece(board=board, row=holder[0], col=holder[1])
+            if captured is not None:
+                while captured.upper() != captured or captured == "#":
+                    if holder[0] < 0 or holder[0] > 7 or holder[1] < 0 or holder[1] > 7:
+                        break
+                    if holder != start_pos:
+                        if orientation == "White":
+                            if captured.upper() == captured and captured != "#":
+                                break
+                            valid_moves.append(holder)
+                        elif orientation == "Black":
+                            if holder == start_pos:
+                                if captured.upper() == captured and captured != "#":
+                                    break
+                                valid_moves.append(holder)
+                    holder = (holder[0] + direction_to_move, holder[1] + side_to_move)
+    return valid_moves
+
+
+def is_valid_queen(move, orientation, board):
+    valid_moves = is_valid_diagonal(move=move, orientation=orientation, board=board, valid_moves=[])
+    valid_moves = is_valid_vertical(move=move, orientation=orientation, board=board, valid_moves=valid_moves)
+    valid_moves = is_valid_horizontal(move=move, orientation=orientation, board=board, valid_moves=valid_moves)
+    if to_number(move[3:5]) in valid_moves:
+        return True
+    return False
