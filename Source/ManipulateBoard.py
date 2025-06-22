@@ -91,8 +91,11 @@ def move_piece(move, board, orientation):
         starting_position = Converter.to_number(move[0:2], orientation)
         ending_position = Converter.to_number(move[3:5], orientation)
         piece = get_piece(board, starting_position[0], starting_position[1])
-
-        if is_valid(move=move, piece=piece, orientation=orientation, board=board):
+        validity = is_valid(move=move, piece=piece, orientation=orientation, board=board)
+        if validity:
+            if validity not in [True, False]:
+                board = validity
+                piece = get_piece(board, starting_position[0], starting_position[1])
             board = set_piece(starting_position, board, '#')
             board = set_piece(ending_position, board, piece)
             return board

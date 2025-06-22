@@ -9,7 +9,11 @@ returns a simple Bool value.
 """
 def is_valid(piece, move, orientation, board):
     if piece.lower() == "p":
-        return is_valid_pawn(move=move, orientation=orientation, board=board, piece=piece)
+        if is_valid_pawn(move=move, orientation=orientation, board=board) and is_promotable(move=move):
+            return promote(move=move, orientation=orientation, board=board)
+        else:
+            return is_valid_pawn(move=move, orientation=orientation, board=board)
+
     elif piece.lower() == "n":
         return True
     elif piece.lower() == "r":
@@ -18,11 +22,48 @@ def is_valid(piece, move, orientation, board):
         return True
     return True
 
+"""
+Checks if pawn is eligible for promotion upon next movement. 
+"""
+def is_promotable(move):
+    if move[4] == "8":
+        return True
+    return False
+"""
+ Promotes the pawn.
+"""
+def promote(move, orientation, board):
+    if orientation == "White":
+        promoting_choice = input("Promote pawn!\n[1] Queen\n[2] Knight\n[3] Bishop\n[4] Rook\n$ ")
+        holder = to_number(move=move[0:2], orientation=orientation)
+        match promoting_choice:
+            case "1":
+                return ManipulateBoard.set_piece(move=holder, board=board, piece="Q")
+            case "2":
+                return ManipulateBoard.set_piece(move=holder, board=board, piece="N")
+            case "3":
+                return ManipulateBoard.set_piece(move=holder, board=board, piece="B")
+            case "4":
+                return ManipulateBoard.set_piece(move=holder, board=board, piece="R")
+    if orientation == "Black":
+        promoting_choice = input("Promote pawn!\n[1] Queen\n[2] Knight\n[3] Bishop\n[4] Rook\n$ ")
+        holder = to_number(move=move[0:2], orientation=orientation)
+        match promoting_choice:
+            case "1":
+                ManipulateBoard.set_piece(move=holder, board=board, piece="q")
+            case "2":
+                ManipulateBoard.set_piece(move=holder, board=board, piece="n")
+            case "3":
+                ManipulateBoard.set_piece(move=holder, board=board, piece="b")
+            case "4":
+                ManipulateBoard.set_piece(move=holder, board=board, piece="r")
+    return False
+
 
 """
 Helper function to handle pawn move validity.
 """
-def is_valid_pawn(move, orientation, board, piece):
+def is_valid_pawn(move, orientation, board):
     from Source.ManipulateBoard import get_piece
     start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
     end_pos = Converter.to_number(move=move[3:5], orientation=orientation)
@@ -37,7 +78,7 @@ def is_valid_pawn(move, orientation, board, piece):
             return False
         else:
             if end_pos == (start_pos[0]-1, start_pos[1]+1):
-                if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() != captured_piece.upper():
+                if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() != captured_piece:
                     return True
             elif  end_pos == (start_pos[0]-1, start_pos[1]-1):
                 if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() != captured_piece:
@@ -58,10 +99,10 @@ def is_valid_pawn(move, orientation, board, piece):
             return False
         else:
             if end_pos == (start_pos[0]+1, start_pos[1]+1):
-                if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() != piece:
+                if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() == captured_piece:
                     return True
             elif end_pos == (start_pos[0] + 1, start_pos[1] - 1):
-                if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() != piece:
+                if ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) != "#" and captured_piece.upper() == captured_piece:
                     return True
             elif end_pos == (start_pos[0]+1, start_pos[1]) and ManipulateBoard.get_piece(board=board, row=end_pos[0], col=end_pos[1]) == "#":
                 return True
