@@ -18,7 +18,6 @@ def main():
         new_board = ManipulateBoard.move_piece(board=board, move=move, orientation=orientation)
         if old_board != new_board:
             board = new_board
-            print("test")
             os.system("cls" if os.name == "nt" else "clear")
             x *= -1
 
