@@ -1,7 +1,7 @@
 import json
 import sys
 import Converter
-
+from Validity import is_valid
 """
     This function initializes the chess board and saves it to a desired file
 """
@@ -28,7 +28,7 @@ def create_board(file_name = "board.json"):
 
 
 """
-    This function reads the chess board from a json file and returns it.
+    This function reads the chess board from a json file and returns it. 
 """
 def read_board(file_name = "board.json"):
     try:
@@ -81,11 +81,6 @@ def set_piece(move, board, piece):
     else:
         raise Exception("Invalid arguments")
 
-"""
-    Placeholder function to check if the board is valid
-"""
-def is_valid(move, piece):
-    return True
 
 """
     Handles piece movement a1xa3
@@ -97,7 +92,7 @@ def move_piece(move, board, orientation):
         ending_position = Converter.to_number(move[3:5], orientation)
         piece = get_piece(board, starting_position[0], starting_position[1])
 
-        if is_valid(move, piece):
+        if is_valid(move=move, piece=piece, orientation=orientation, board=board):
             board = set_piece(starting_position, board, '#')
             board = set_piece(ending_position, board, piece)
             return board

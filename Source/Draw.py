@@ -4,12 +4,12 @@ def draw(board="None", orientation="White"):
     if orientation == "White":
         for row in board:
             for col in row:
-                print(col, end="  ")
+                print(col, end="    ")
             print(end="\n \n")
     if orientation == "Black":
         for row in board[::-1]:
             for col in row:
-                print(col, end="  ")
+                print(col, end="    ")
             print(end="\n \n")
 
 
