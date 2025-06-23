@@ -3,9 +3,9 @@ import ManipulateBoard
 from Source.Converter import to_number
 
 """
-This function is a general handler for all piece validity checks.
-It passes it to helper functions to actually deal with the validation.
-returns a simple Bool value.
+ This function is a general handler for all piece validity checks.
+ It passes it to helper functions to actually deal with the validation.
+ returns a simple Bool value.
 """
 def is_valid(piece, move, orientation, board):
     if piece.lower() == "p":
@@ -13,18 +13,21 @@ def is_valid(piece, move, orientation, board):
             return promote(move=move, orientation=orientation, board=board)
         else:
             return is_valid_pawn(move=move, orientation=orientation, board=board)
-
     elif piece.lower() == "n":
-        return True
+        return is_valid_knight(move=move, orientation=orientation, board=board)
     elif piece.lower() == "r":
         return is_valid_rook(move=move, orientation=orientation, board=board)
     elif piece.lower() == "b":
-        if is_valid_bishop(move=move, orientation=orientation, board=board):
-            return True
+        return is_valid_bishop(move=move, orientation=orientation, board=board)
+    elif piece.lower() == "k":
+        return is_valid_king(move=move, orientation=orientation, board=board)
+    elif piece.lower() == "q":
+        return is_valid_queen(move=move, orientation=orientation, board=board)
     return False
 
 """
-Checks if pawn is eligible for promotion upon next movement. 
+ Checks if pawn is eligible for promotion upon next movement.
+ Returns a boolean. 
 """
 def is_promotable(move):
     if move[4] == "8":
@@ -32,6 +35,7 @@ def is_promotable(move):
     return False
 """
  Promotes the pawn.
+ Returns the board or False.
 """
 def promote(move, orientation, board):
     if orientation == "White":
@@ -63,6 +67,7 @@ def promote(move, orientation, board):
 
 """
 Helper function to handle pawn move validity.
+Returns a boolean.
 """
 def is_valid_pawn(move, orientation, board):
     from Source.ManipulateBoard import get_piece
@@ -111,7 +116,10 @@ def is_valid_pawn(move, orientation, board):
                 return False
     return False
 
-
+"""
+Uses a helper function to map all valid vertical and horizontal moves then compares the user desired move against said list.
+Returns a boolean.
+"""
 def is_valid_rook(move, orientation, board):
     valid_moves = []
     is_valid_vertical(move=move, orientation=orientation, board=board, valid_moves=valid_moves),
@@ -119,7 +127,10 @@ def is_valid_rook(move, orientation, board):
     if Converter.to_number(move[3:5]) in valid_moves:
         return True
     return False
-
+"""
+Maps all valid horizontal moves.
+Returns a list of valid moves.
+"""
 def is_valid_horizontal(move, orientation, board, valid_moves):
     from Source.ManipulateBoard import get_piece
     start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
@@ -146,7 +157,10 @@ def is_valid_horizontal(move, orientation, board, valid_moves):
                 holder = (holder[0], holder[1]+side_to_move)
     return valid_moves
 
-
+"""
+Maps all vertical valid moves.
+Returns a list of valid moves.
+"""
 def is_valid_vertical(move, orientation, board, valid_moves):
     from Source.ManipulateBoard import get_piece
     start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
@@ -172,13 +186,19 @@ def is_valid_vertical(move, orientation, board, valid_moves):
                             valid_moves.append(holder)
                 holder = (holder[0] + direction_to_move, holder[1])
     return valid_moves
-
+"""
+Uses a helper function to map all diagonal valid moves and checks against it.
+Returns a bool.
+"""
 def is_valid_bishop(move, orientation, board):
     valid_moves = is_valid_diagonal(move=move, orientation=orientation, board=board, valid_moves=[])
     if to_number(move[3:5]) in valid_moves:
         return True
     return False
-
+"""
+Maps all valid moves diagonally.
+Returns a list of all valid moves.
+"""
 def is_valid_diagonal(move, orientation, board, valid_moves):
     from Source.ManipulateBoard import get_piece
     start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
@@ -208,11 +228,80 @@ def is_valid_diagonal(move, orientation, board, valid_moves):
                     holder = (holder[0] + direction_to_move, holder[1] + side_to_move)
     return valid_moves
 
-
+"""
+Uses helper functions that were used in bishop and rook mapping to determine all valid moves and checks against those to see if the user's desired move is valid.
+"""
 def is_valid_queen(move, orientation, board):
     valid_moves = is_valid_diagonal(move=move, orientation=orientation, board=board, valid_moves=[])
     valid_moves = is_valid_vertical(move=move, orientation=orientation, board=board, valid_moves=valid_moves)
     valid_moves = is_valid_horizontal(move=move, orientation=orientation, board=board, valid_moves=valid_moves)
+    print(valid_moves)
     if to_number(move[3:5]) in valid_moves:
         return True
     return False
+"""
+ Uses a helper function to map all valid moves of the knight and checks if the desired move in inside the for mentioned map.
+ Returns a boolean.
+"""
+def is_valid_knight(move, orientation, board):
+    end_pos = Converter.to_number(move=move[3:5], orientation=orientation)
+    valid_moves = knight_moves(valid_moves=[], orientation=orientation, board=board, move=move)
+    if end_pos in valid_moves:
+        print(valid_moves, end_pos)
+        return True
+    print(valid_moves, end_pos)
+    return False
+"""
+ Maps all valid knight moves.
+ Returns a list of all valid moves.
+"""
+def knight_moves(valid_moves, orientation, board, move):
+    from Source.ManipulateBoard import get_piece
+    start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
+    valid_modifiers = [
+        (2, 1), (1, 2),
+        (-1, 2), (-2, 1),
+        (-2, -1), (-1, -2),
+        (1, -2), (2, -1)
+    ]
+    for modifier in valid_modifiers:
+        holder = (start_pos[0] + modifier[0], start_pos[1] + modifier[1])
+        if orientation == "White":
+            captured = get_piece(board=board, row=holder[0], col=holder[1])
+            if holder[0] >= 0 and holder[0] <= 7 and holder[1] >= 0 and holder[1] <= 7:
+                if captured == "#" or captured.upper() != captured:
+                    valid_moves.append(holder)
+        elif orientation == "Black":
+            captured = get_piece(board=board, row=holder[0], col=holder[1])
+            if captured == "#" or captured.upper() == captured:
+                if holder[0] > 0 and holder[0] < 7 and holder[1] > 0 and holder[1] < 7:
+                    valid_moves.append(holder)
+    return valid_moves
+
+def is_valid_king(move, orientation, board):
+    start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
+    valid_moves = king_moves(valid_moves=[], orientation=orientation, board=board, move=move)
+    if start_pos in valid_moves:
+        print(valid_moves)
+        return True
+    print(valid_moves)
+    return False
+
+def king_moves(valid_moves, orientation, board, move):
+    from Source.ManipulateBoard import get_piece
+    start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
+    valid_modifiers = [
+        (1, 0), (1, 1), (0, 1), (-1, 1),
+        (-1, 0), (-1, -1), (0, -1), (1, -1)
+    ]
+    for modifier in valid_modifiers:
+        holder = (start_pos[0] + modifier[0], start_pos[1] + modifier[1])
+        captured = get_piece(board=board, row=holder[0], col=holder[1])
+        if 0 <= holder[0] <= 7 and 0 <= holder[1] <= 7:
+            if orientation == "White":
+                if captured.upper() != captured or captured == "#":
+                    valid_moves.append(holder)
+            elif orientation == "Black":
+                if captured.upper() == captured or captured == "#":
+                    valid_moves.append(holder)
+    return valid_moves
