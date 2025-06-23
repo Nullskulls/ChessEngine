@@ -140,21 +140,27 @@ def is_valid_horizontal(move, orientation, board, valid_moves):
         side_to_move *= -1
         holder = (holder[0], holder[1] + side_to_move)
         captured = get_piece(board=board, row=holder[0], col=holder[1])
-        if captured is not None:
-            while captured.upper() != captured or captured == "#":
-                if holder[1] < 0 or holder[1] > 7:
-                    break
-                if holder != start_pos:
-                    if orientation == "White":
-                        if captured.upper() == captured and captured != "#":
+        while captured is not None:
+            if holder[1] < 0 or holder[1] > 7:
+                break
+            if holder != start_pos:
+                if orientation == "White":
+                    if captured.upper() == captured and captured != "#":
+                        break
+                    elif captured != "#":
+                        valid_moves.append(holder)
+                        break
+                    valid_moves.append(holder)
+                elif orientation == "Black":
+                    if holder == start_pos:
+                        if captured.upper() != captured and captured != "#":
+                            break
+                        elif captured != "#":
+                            valid_moves.append(holder)
                             break
                         valid_moves.append(holder)
-                    elif orientation == "Black":
-                        if holder == start_pos:
-                            if captured.upper() != captured and captured != "#":
-                                break
-                            valid_moves.append(holder)
-                holder = (holder[0], holder[1]+side_to_move)
+            holder = (holder[0], holder[1]+side_to_move)
+            captured = get_piece(board=board, row=holder[0], col=holder[1])
     return valid_moves
 
 """
@@ -170,21 +176,27 @@ def is_valid_vertical(move, orientation, board, valid_moves):
         direction_to_move *= -1
         holder = (holder[0]+ direction_to_move, holder[1])
         captured = get_piece(board=board, row=holder[0], col=holder[1])
-        if captured is not None:
-            while captured.upper() != captured or captured == "#":
-                if holder[0] < 0 or holder[0] > 7:
-                    break
-                if holder != start_pos:
-                    if orientation == "White":
+        while captured is not None:
+            if holder[0] < 0 or holder[0] > 7:
+                break
+            if holder != start_pos:
+                if orientation == "White":
+                    if captured.upper() == captured and captured != "#":
+                        break
+                    elif captured != "#":
+                        valid_moves.append(holder)
+                        break
+                    valid_moves.append(holder)
+                elif orientation == "Black":
+                    if holder == start_pos:
                         if captured.upper() == captured and captured != "#":
                             break
-                        valid_moves.append(holder)
-                    elif orientation == "Black":
-                        if holder == start_pos:
-                            if captured.upper() == captured and captured != "#":
-                                break
+                        elif captured != "#":
                             valid_moves.append(holder)
-                holder = (holder[0] + direction_to_move, holder[1])
+                            break
+                        valid_moves.append(holder)
+            holder = (holder[0] + direction_to_move, holder[1])
+            captured = get_piece(board=board, row=holder[0], col=holder[1])
     return valid_moves
 """
 Uses a helper function to map all diagonal valid moves and checks against it.
@@ -211,21 +223,26 @@ def is_valid_diagonal(move, orientation, board, valid_moves):
             direction_to_move *= -1
             holder = (holder[0] + direction_to_move, holder[1]+side_to_move)
             captured = get_piece(board=board, row=holder[0], col=holder[1])
-            if captured is not None:
-                while captured.upper() != captured or captured == "#":
-                    if holder[0] < 0 or holder[0] > 7 or holder[1] < 0 or holder[1] > 7:
-                        break
-                    if holder != start_pos:
-                        if orientation == "White":
+            while captured is not None:
+                if holder[0] < 0 or holder[0] > 7 or holder[1] < 0 or holder[1] > 7:
+                    break
+                if holder != start_pos:
+                    if orientation == "White":
+                        if captured.upper() == captured and captured != "#":
+                            break
+                        if captured != "#":
+                            valid_moves.append(holder)
+                            break
+                        valid_moves.append(holder)
+                    elif orientation == "Black":
+                        if holder == start_pos:
                             if captured.upper() == captured and captured != "#":
                                 break
-                            valid_moves.append(holder)
-                        elif orientation == "Black":
-                            if holder == start_pos:
-                                if captured.upper() == captured and captured != "#":
-                                    break
+                            if captured != "#":
                                 valid_moves.append(holder)
-                    holder = (holder[0] + direction_to_move, holder[1] + side_to_move)
+                                break
+                            valid_moves.append(holder)
+                holder = (holder[0] + direction_to_move, holder[1] + side_to_move)
     return valid_moves
 
 """
@@ -268,20 +285,21 @@ def knight_moves(valid_moves, orientation, board, move):
         holder = (start_pos[0] + modifier[0], start_pos[1] + modifier[1])
         if orientation == "White":
             captured = get_piece(board=board, row=holder[0], col=holder[1])
-            if holder[0] >= 0 and holder[0] <= 7 and holder[1] >= 0 and holder[1] <= 7:
+            if 0 <= holder[0] <= 7 and 0 <= holder[1] <= 7:
                 if captured == "#" or captured.upper() != captured:
                     valid_moves.append(holder)
         elif orientation == "Black":
             captured = get_piece(board=board, row=holder[0], col=holder[1])
-            if captured == "#" or captured.upper() == captured:
-                if holder[0] > 0 and holder[0] < 7 and holder[1] > 0 and holder[1] < 7:
-                    valid_moves.append(holder)
+            if captured is not None:
+                if captured == "#" or captured.upper() == captured:
+                    if 0 <= holder[0] <= 7 and 0 <= holder[1] <= 7:
+                        valid_moves.append(holder)
     return valid_moves
 
 def is_valid_king(move, orientation, board):
-    start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
+    end_pos = Converter.to_number(move=move[3:5], orientation=orientation)
     valid_moves = king_moves(valid_moves=[], orientation=orientation, board=board, move=move)
-    if start_pos in valid_moves:
+    if end_pos in valid_moves:
         print(valid_moves)
         return True
     print(valid_moves)
@@ -305,3 +323,19 @@ def king_moves(valid_moves, orientation, board, move):
                 if captured.upper() == captured or captured == "#":
                     valid_moves.append(holder)
     return valid_moves
+
+def is_pawn_checked(pos, orientation, checked_squares):
+    modifiers = (
+    (1, 1), (1, -1)
+    )
+    if orientation == "Black":
+        for modifier in modifiers:
+            holder = (pos[0] + modifier[0], pos[1] + modifier[1])
+            if 0 <= holder[0] <= 7 and 0 <= holder[1] <= 7:
+                checked_squares.append(holder)
+    elif orientation == "White":
+        for modifier in modifiers:
+            holder = (pos[0] - modifier[0], pos[1] + modifier[1])
+            if 0 <= holder[0] <= 7 and 0 <= holder[1] <= 7:
+                checked_squares.append(holder)
+    return list(checked_squares)

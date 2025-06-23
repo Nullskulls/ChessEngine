@@ -13,7 +13,7 @@ def main():
         else:
             raise Exception("Unexpected error occurred please try again")
         Draw.draw(board, orientation)
-        move = input("Please enter a move: ")
+        move = input("Please enter a move.\n$ ")
         old_board = copy.deepcopy(board)
         new_board = ManipulateBoard.move_piece(board=board, move=move, orientation=orientation)
         if old_board != new_board:

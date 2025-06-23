@@ -1,6 +1,7 @@
 import json
 import sys
 import Converter
+import Checkmate
 from Validity import is_valid
 """
     This function initializes the chess board and saves it to a desired file
@@ -92,13 +93,21 @@ def move_piece(move, board, orientation):
         ending_position = Converter.to_number(move[3:5], orientation)
         piece = get_piece(board, starting_position[0], starting_position[1])
         validity = is_valid(move=move, piece=piece, orientation=orientation, board=board)
+        temp_board = []
         if validity:
             if validity not in [True, False]:
-                board = validity
+                temp_board = validity
                 piece = get_piece(board, starting_position[0], starting_position[1])
-            board = set_piece(starting_position, board, '#')
-            board = set_piece(ending_position, board, piece)
-            return board
+            temp_board = set_piece(starting_position, board, '#')
+            temp_board = set_piece(ending_position, temp_board, piece)
+            check_mate = Checkmate.is_checkmate(board=board)
+            if not check_mate:
+                board = temp_board
+                return board
+            elif check_mate == "Check":
+                return board
+            else:
+                sys.exit(check_mate)
         else:
             print("Invalid move")
             return board

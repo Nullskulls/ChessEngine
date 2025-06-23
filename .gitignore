@@ -19,3 +19,4 @@ venv/
 
 # Jupyter Notebook
 .ipynb_checkpoints/
+/Source/board.json
