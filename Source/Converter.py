@@ -13,6 +13,7 @@ def to_number(move, orientation = "White"):
 
 if __name__ == "__main__":
     #quick test
+    print(to_number([7, 0, "x", 8, 1][0:2], "White"))
     print(to_number([7,0], "White"))  # [7, 0]
     print(to_number("h8", "White"))  # [0, 7]
     print(to_number("a1", "Black"))  # [0, 0]

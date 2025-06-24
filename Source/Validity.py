@@ -79,8 +79,9 @@ def is_valid_pawn(move, orientation, board):
             return False
         elif end_pos[0] != start_pos[0]-1:
             if start_pos[0] == 6 and end_pos[0] == 4:
-                if start_pos[1] == end_pos[1]:
-                    return True
+                if get_piece(row=5, col=end_pos[1], board=board) == "#" and get_piece(row=4, col=end_pos[1], board=board) == "#":
+                    if start_pos[1] == end_pos[1]:
+                        return True
             return False
         else:
             if end_pos == (start_pos[0]-1, start_pos[1]+1):
@@ -100,8 +101,9 @@ def is_valid_pawn(move, orientation, board):
             return False
         elif end_pos[0] != start_pos[0]+1:
             if start_pos[0] == 1 and end_pos[0] == 3:
-                if start_pos[1] == end_pos[1]:
-                    return True
+                if get_piece(row=2, col=end_pos[1], board=board) == "#" and get_piece(row=3, col=end_pos[1], board=board) == "#":
+                    if start_pos[1] == end_pos[1]:
+                        return True
             return False
         else:
             if end_pos == (start_pos[0]+1, start_pos[1]+1):
@@ -188,13 +190,12 @@ def is_valid_vertical(move, orientation, board, valid_moves):
                         break
                     valid_moves.append(holder)
                 elif orientation == "Black":
-                    if holder == start_pos:
-                        if captured.upper() == captured and captured != "#":
-                            break
-                        elif captured != "#":
-                            valid_moves.append(holder)
-                            break
+                    if captured.upper() != captured and captured != "#":
+                        break
+                    elif captured != "#":
                         valid_moves.append(holder)
+                        break
+                    valid_moves.append(holder)
             holder = (holder[0] + direction_to_move, holder[1])
             captured = get_piece(board=board, row=holder[0], col=holder[1])
     return valid_moves
@@ -235,14 +236,14 @@ def is_valid_diagonal(move, orientation, board, valid_moves):
                             break
                         valid_moves.append(holder)
                     elif orientation == "Black":
-                        if holder == start_pos:
-                            if captured.upper() == captured and captured != "#":
-                                break
-                            if captured != "#":
-                                valid_moves.append(holder)
-                                break
+                        if captured.upper() == captured and captured != "#":
                             valid_moves.append(holder)
+                            break
+                        elif captured.islower():
+                            break
+                        valid_moves.append(holder)
                 holder = (holder[0] + direction_to_move, holder[1] + side_to_move)
+                captured = get_piece(board=board, row=holder[0], col=holder[1])
     return valid_moves
 
 """
@@ -252,8 +253,7 @@ def is_valid_queen(move, orientation, board):
     valid_moves = is_valid_diagonal(move=move, orientation=orientation, board=board, valid_moves=[])
     valid_moves = is_valid_vertical(move=move, orientation=orientation, board=board, valid_moves=valid_moves)
     valid_moves = is_valid_horizontal(move=move, orientation=orientation, board=board, valid_moves=valid_moves)
-    print(valid_moves)
-    if to_number(move[3:5]) in valid_moves:
+    if to_number(move[3:5], orientation=orientation) in valid_moves:
         return True
     return False
 """
@@ -264,9 +264,7 @@ def is_valid_knight(move, orientation, board):
     end_pos = Converter.to_number(move=move[3:5], orientation=orientation)
     valid_moves = knight_moves(valid_moves=[], orientation=orientation, board=board, move=move)
     if end_pos in valid_moves:
-        print(valid_moves, end_pos)
         return True
-    print(valid_moves, end_pos)
     return False
 """
  Maps all valid knight moves.
@@ -300,9 +298,7 @@ def is_valid_king(move, orientation, board):
     end_pos = Converter.to_number(move=move[3:5], orientation=orientation)
     valid_moves = king_moves(valid_moves=[], orientation=orientation, board=board, move=move)
     if end_pos in valid_moves:
-        print(valid_moves)
         return True
-    print(valid_moves)
     return False
 
 def king_moves(valid_moves, orientation, board, move):

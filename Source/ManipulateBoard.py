@@ -1,5 +1,7 @@
 import json
 import sys
+from copy import deepcopy
+
 import Converter
 import Checkmate
 from Validity import is_valid
@@ -93,26 +95,37 @@ def move_piece(move, board, orientation):
         ending_position = Converter.to_number(move[3:5], orientation)
         piece = get_piece(board, starting_position[0], starting_position[1])
         validity = is_valid(move=move, piece=piece, orientation=orientation, board=board)
-        temp_board = []
         if validity:
             if validity not in [True, False]:
-                temp_board = validity
+                board = validity
                 piece = get_piece(board, starting_position[0], starting_position[1])
-            temp_board = set_piece(starting_position, board, '#')
-            temp_board = set_piece(ending_position, temp_board, piece)
-            check_mate = Checkmate.is_checkmate(board=board)
-            if not check_mate:
-                board = temp_board
-                return board
-            elif check_mate == "Check":
-                return board
-            else:
-                sys.exit(check_mate)
+            if not Checkmate.is_checked(board=board):
+                temp_board = set_piece(starting_position, deepcopy(board), '#')
+                temp_board = set_piece(ending_position, temp_board, piece)
+                if not Checkmate.is_checked(board=temp_board):
+                    board = temp_board
+                    return board
+                else:
+                    print("Piece is checked. ")
+                    return board
+            elif Checkmate.is_checked(board=board) and not Checkmate.is_checkmate(board=board):
+                temp_board = set_piece(ending_position, deepcopy(board), '#')
+                temp_board = set_piece(starting_position, temp_board, piece)
+                if not Checkmate.is_checked(board=temp_board):
+                    board = temp_board
+                    return board
+                else:
+                    print("You are checked. ")
+                    return board
+            elif Checkmate.is_checkmate(board=board):
+                return "Checkmate"
+
         else:
             print("Invalid move")
             return board
     else:
         raise Exception("Invalid arguments")
+    raise Exception("Unexpected errors")
 
 
 if __name__ == "__main__":
