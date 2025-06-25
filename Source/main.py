@@ -30,7 +30,7 @@ def pass_and_play():
         else:
             raise Exception("Unexpected error occurred please try again")
         Draw.draw(board, orientation)
-        move = input("Please enter a move.\n$ ")
+        move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         old_board = copy.deepcopy(board)
         new_board = ManipulateBoard.move_piece(board=board, move=move, orientation=orientation)
         if old_board != new_board:
@@ -59,7 +59,7 @@ def play_against_bot(bot):
         Draw.draw(board=board, orientation=user_orientation)
         if playing == user_orientation:
             print(bot_move["quote"])
-            move = input("Please enter a move.\n$ ")
+            move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         else:
             if bot == "1":
                 bot_move = meowzers_play(orientation=playing, board=board)
