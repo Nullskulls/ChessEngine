@@ -8,8 +8,10 @@ from Converter import to_number
  returns a simple Bool value.
 """
 def is_valid(piece, move, orientation, board, bypass=False):
+    #if bypass is true (only used for cheating bots) skip this entirly and return true
     if bypass:
         return True
+    #deligate everything to helper functions
     if piece.islower() and orientation == "White" or piece.isupper() and orientation == "Black":
         return False
     if piece.lower() == "p":
@@ -34,6 +36,7 @@ def is_valid(piece, move, orientation, board, bypass=False):
  Returns a boolean. 
 """
 def is_promotable(move):
+    #check if the pawn is being moved to the 8th rank
     if move[4] == "8":
         return True
     return False
@@ -42,30 +45,20 @@ def is_promotable(move):
  Returns the board or False.
 """
 def promote(move, orientation, board):
-    if orientation == "White":
-        promoting_choice = input("Promote pawn!\n[1] Queen\n[2] Knight\n[3] Bishop\n[4] Rook\n$ ")
-        holder = to_number(move=move[0:2], orientation=orientation)
-        match promoting_choice:
-            case "1":
-                return ManipulateBoard.set_piece(move=holder, board=board, piece="Q")
-            case "2":
-                return ManipulateBoard.set_piece(move=holder, board=board, piece="N")
-            case "3":
-                return ManipulateBoard.set_piece(move=holder, board=board, piece="B")
-            case "4":
-                return ManipulateBoard.set_piece(move=holder, board=board, piece="R")
-    if orientation == "Black":
-        promoting_choice = input("Promote pawn!\n[1] Queen\n[2] Knight\n[3] Bishop\n[4] Rook\n$ ")
-        holder = to_number(move=move[0:2], orientation=orientation)
-        match promoting_choice:
-            case "1":
-                ManipulateBoard.set_piece(move=holder, board=board, piece="q")
-            case "2":
-                ManipulateBoard.set_piece(move=holder, board=board, piece="n")
-            case "3":
-                ManipulateBoard.set_piece(move=holder, board=board, piece="b")
-            case "4":
-                ManipulateBoard.set_piece(move=holder, board=board, piece="r")
+    #prompt for choice of piece
+    promoting_choice = input("Promote pawn!\n[1] Queen\n[2] Knight\n[3] Bishop\n[4] Rook\n$ ")
+    #create a holder for the start position
+    holder = to_number(move=move[0:2], orientation=orientation)
+    #set the piece at the start position to the desired piece
+    match promoting_choice:
+        case "1":
+            return ManipulateBoard.set_piece(move=holder, board=board, piece="Q")
+        case "2":
+            return ManipulateBoard.set_piece(move=holder, board=board, piece="N")
+        case "3":
+            return ManipulateBoard.set_piece(move=holder, board=board, piece="B")
+        case "4":
+            return ManipulateBoard.set_piece(move=holder, board=board, piece="R")
     return False
 
 
@@ -74,7 +67,9 @@ Helper function to handle pawn move validity.
 Returns a boolean.
 """
 def is_valid_pawn(move, orientation, board):
+    #import get piece inside the function to avoid recursive import calls
     from ManipulateBoard import get_piece
+    #initialize variables
     start_pos = Converter.to_number(move=move[0:2], orientation=orientation)
     end_pos = Converter.to_number(move=move[3:5], orientation=orientation)
     captured_piece = get_piece(row=end_pos[0], col=end_pos[1], board=board)

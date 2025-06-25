@@ -8,7 +8,9 @@ from Validity import is_valid
     Function to save moves to persistent storage.
 """
 def saver(data, file_name = "board.json"):
+    #open file.
     with open(file_name, "w") as file:
+        #overwrite existing data and save new data to file.
         file.write(json.dumps(data))
 
 
@@ -30,7 +32,7 @@ def create_board(file_name = "board.json"):
     try:
         #open file
         with open(file_name, "w") as file:
-            #write to file using json dumps for clarity
+            #write to file using json dumps
             file.write(json.dumps(board))
             return True
     except FileNotFoundError:
@@ -53,10 +55,12 @@ def read_board(file_name = "board.json"):
         #if board is created returns the board
         if create_board():
             try:
+                #try reading the file again
                 with open(file_name, "r") as file:
                     return json.loads(file.read())
 
             except Exception as error:
+                #if it fails return the error and exit
                 print(f"Unexpected error occurred whilst creating your board: {error}")
                 sys.exit()
         else:
@@ -98,30 +102,41 @@ def set_piece(move, board, piece):
 def move_piece(move, board, orientation, bypass = False):
     #check if all arguments are present
     if move is not None and board is not None and orientation is not None:
+        #initialze all values
         starting_position = Converter.to_number(move[0:2], orientation)
         ending_position = Converter.to_number(move[3:5], orientation)
         piece = get_piece(board, starting_position[0], starting_position[1])
         validity = is_valid(move=move, piece=piece, orientation=orientation, board=board, bypass=bypass)
+        #if not in checkmate
         if not Checkmate.is_checkmate(board=board):
+            #if valid is valid or not none
             if validity:
+                #if validation not true or false (only happens when a pawn promotes it returns a new board)
                 if validity not in [True, False]:
+                    #set the board to the returned board
                     board = validity
+                    #update the variable piece so it isn't undone
                     piece = get_piece(board, starting_position[0], starting_position[1])
-
+                #make a copy of the board
                 temp_board = set_piece(starting_position, deepcopy(board), '#')
                 temp_board = set_piece(ending_position, temp_board, piece)
+                #if not now in checkmate
                 if not Checkmate.is_checked(board=temp_board) and not Checkmate.is_checkmate(board=temp_board):
+                    #finalize by saving temporary board to board
                     board = temp_board
                     return board
+                #if is checked and not checkmated return the board without the prev move
                 elif not Checkmate.is_checkmate(board=temp_board) and Checkmate.is_checked(board=temp_board):
                     print("Piece is checked. ")
                     return board
+                #else (has to be checkmate) exit the program
                 else:
                     sys.exit("Checkmate.")
-
+        #if move is invalid ignore it
         else:
             print("Invalid move")
             return board
+    #if everything is skipped throw an error
     else:
         raise Exception("Invalid arguments")
     raise Exception("Unexpected errors")
