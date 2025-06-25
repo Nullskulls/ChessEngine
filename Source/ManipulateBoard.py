@@ -1,10 +1,17 @@
 import json
 import sys
 from copy import deepcopy
-
 import Converter
 import Checkmate
 from Validity import is_valid
+"""
+    Function to save moves to persistent storage.
+"""
+def saver(data, file_name = "board.json"):
+    with open(file_name, "w") as file:
+        file.write(json.dumps(data))
+
+
 """
     This function initializes the chess board and saves it to a desired file
 """
@@ -88,37 +95,29 @@ def set_piece(move, board, piece):
 """
     Handles piece movement a1xa3
 """
-def move_piece(move, board, orientation):
+def move_piece(move, board, orientation, bypass = False):
     #check if all arguments are present
     if move is not None and board is not None and orientation is not None:
         starting_position = Converter.to_number(move[0:2], orientation)
         ending_position = Converter.to_number(move[3:5], orientation)
         piece = get_piece(board, starting_position[0], starting_position[1])
-        validity = is_valid(move=move, piece=piece, orientation=orientation, board=board)
-        if validity:
-            if validity not in [True, False]:
-                board = validity
-                piece = get_piece(board, starting_position[0], starting_position[1])
-            if not Checkmate.is_checked(board=board):
+        validity = is_valid(move=move, piece=piece, orientation=orientation, board=board, bypass=bypass)
+        if not Checkmate.is_checkmate(board=board):
+            if validity:
+                if validity not in [True, False]:
+                    board = validity
+                    piece = get_piece(board, starting_position[0], starting_position[1])
+
                 temp_board = set_piece(starting_position, deepcopy(board), '#')
                 temp_board = set_piece(ending_position, temp_board, piece)
-                if not Checkmate.is_checked(board=temp_board):
+                if not Checkmate.is_checked(board=temp_board) and not Checkmate.is_checkmate(board=temp_board):
                     board = temp_board
                     return board
-                else:
+                elif not Checkmate.is_checkmate(board=temp_board) and Checkmate.is_checked(board=temp_board):
                     print("Piece is checked. ")
                     return board
-            elif Checkmate.is_checked(board=board) and not Checkmate.is_checkmate(board=board):
-                temp_board = set_piece(ending_position, deepcopy(board), '#')
-                temp_board = set_piece(starting_position, temp_board, piece)
-                if not Checkmate.is_checked(board=temp_board):
-                    board = temp_board
-                    return board
                 else:
-                    print("You are checked. ")
-                    return board
-            elif Checkmate.is_checkmate(board=board):
-                return "Checkmate"
+                    sys.exit("Checkmate.")
 
         else:
             print("Invalid move")

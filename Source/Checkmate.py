@@ -1,7 +1,6 @@
 import copy
 
 import Validity
-from ManipulateBoard import move_piece
 
 
 def find_king_pos(board):
@@ -123,31 +122,23 @@ def is_checked(board):
     else:
         return True
 
+
 def is_checkmate(board):
     if not is_checked(board):
         return False
-
     checked = find_checker(board)
     if checked is None:
-        return False  # failsafe — should never happen here
-
+        return False
     attacking_side = checked["orientation"]
     defending_side = "Black" if attacking_side == "White" else "White"
     king_pos = find_king_pos(board)["white_king" if defending_side == "White" else "black_king"]
-
-    # 1. Try every piece on defending side
     for i in range(len(board)):
         for j in range(len(board[i])):
             piece = board[i][j]
-
-            # Skip empty squares
             if piece == "#":
                 continue
-
-            # Skip opponent's pieces
             if (piece.isupper() and defending_side != "White") or (piece.islower() and defending_side != "Black"):
                 continue
-
             for r in range(8):
                 for c in range(8):
                     move = [i, j, "x", r, c]
@@ -155,8 +146,6 @@ def is_checkmate(board):
                         simulated = simulate_board(copy.deepcopy(board), move, defending_side)
                         if not is_checked(simulated):
                             return False
-
-    # 2. Try moving the king
     king_moves = Validity.king_moves(valid_moves=[], move=king_pos, board=board, orientation=defending_side)
     for dest in king_moves:
         move = [king_pos[0], king_pos[1], "x", dest[0], dest[1]]
@@ -164,13 +153,13 @@ def is_checkmate(board):
             simulated = simulate_board(board, move, defending_side)
             if not is_checked(simulated):
                 return False
-
-    return True  # No legal moves = checkmate
+    return True
 
 
 
 
 def simulate_board(board, move, orientation):
+    from ManipulateBoard import move_piece
     temp_board = copy.deepcopy(board)
     temp_board = move_piece(move=move, board=temp_board, orientation=orientation)
     return temp_board
