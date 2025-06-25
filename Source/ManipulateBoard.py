@@ -108,7 +108,7 @@ def move_piece(move, board, orientation, bypass = False):
         piece = get_piece(board, starting_position[0], starting_position[1])
         validity = is_valid(move=move, piece=piece, orientation=orientation, board=board, bypass=bypass)
         #if not in checkmate
-        if not Checkmate.is_checkmate(board=board):
+        if not Checkmate.is_checkmate(board=board, bypass=bypass):
             #if valid is valid or not none
             if validity:
                 #if validation not true or false (only happens when a pawn promotes it returns a new board)
@@ -121,12 +121,12 @@ def move_piece(move, board, orientation, bypass = False):
                 temp_board = set_piece(starting_position, deepcopy(board), '#')
                 temp_board = set_piece(ending_position, temp_board, piece)
                 #if not now in checkmate
-                if not Checkmate.is_checked(board=temp_board) and not Checkmate.is_checkmate(board=temp_board):
+                if not Checkmate.is_checked(board=temp_board) and not Checkmate.is_checkmate(board=temp_board, bypass=bypass):
                     #finalize by saving temporary board to board
                     board = temp_board
                     return board
                 #if is checked and not checkmated return the board without the prev move
-                elif not Checkmate.is_checkmate(board=temp_board) and Checkmate.is_checked(board=temp_board):
+                elif not Checkmate.is_checkmate(board=temp_board, bypass=bypass) and Checkmate.is_checked(board=temp_board):
                     print("Piece is checked. ")
                     return board
                 #else (has to be checkmate) exit the program

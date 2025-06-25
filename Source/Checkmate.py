@@ -123,8 +123,8 @@ def is_checked(board):
         return True
 
 
-def is_checkmate(board):
-    if not is_checked(board):
+def is_checkmate(board, bypass= False):
+    if not is_checked(board) or bypass:
         return False
     checked = find_checker(board)
     if checked is None:
@@ -161,5 +161,5 @@ def is_checkmate(board):
 def simulate_board(board, move, orientation):
     from ManipulateBoard import move_piece
     temp_board = copy.deepcopy(board)
-    temp_board = move_piece(move=move, board=temp_board, orientation=orientation)
+    temp_board = move_piece(move=move, board=temp_board, orientation=orientation, bypass=True)
     return temp_board
