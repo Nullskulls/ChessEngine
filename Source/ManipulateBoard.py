@@ -126,10 +126,13 @@ def move_piece(move, board, orientation, bypass = False):
                     board = temp_board
                     return board
                 #if is checked and not checkmated return the board without the prev move
-                elif not Checkmate.is_checkmate(board=temp_board, bypass=bypass) and Checkmate.is_checked(board=temp_board):
+                elif not Checkmate.is_checkmate(board=temp_board, bypass=bypass) and Checkmate.is_checked(board=temp_board) and (Checkmate.find_checker(board=temp_board)['orientation'] != orientation):
                     print("Piece is checked. ")
                     return board
                 #else (has to be checkmate) exit the program
+                elif not Checkmate.is_checkmate(board=temp_board, bypass=bypass) and Checkmate.is_checked(board=temp_board) and (Checkmate.find_checker(board=temp_board)['orientation'] == orientation):
+                    board = temp_board
+                    return board
                 else:
                     sys.exit("Checkmate.")
         #if move is invalid ignore it
