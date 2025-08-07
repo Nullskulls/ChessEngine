@@ -58,9 +58,11 @@ def play_against_bot(bot):
         playing = "White" if turn == 1 else "Black"
         Draw.draw(board=board, orientation=user_orientation)
         if playing == user_orientation:
+            bypass = False
             print(bot_move["quote"])
             move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         else:
+            bypass = True if int(bot) == 2 or 3 else False
             if bot == "1":
                 bot_move = meowzers_play(orientation=playing, board=board)
             elif bot == "2":
