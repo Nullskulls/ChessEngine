@@ -1,4 +1,5 @@
 import json
+import time
 import sys
 from copy import deepcopy
 import Converter
@@ -142,7 +143,7 @@ def move_piece(move, board, orientation, bypass = False):
     #if everything is skipped throw an error
     else:
         raise Exception("Invalid arguments")
-    raise Exception("Unexpected errors")
+    return board
 
 
 if __name__ == "__main__":

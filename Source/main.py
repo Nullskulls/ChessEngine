@@ -31,6 +31,9 @@ def pass_and_play():
             raise Exception("Unexpected error occurred please try again")
         Draw.draw(board, orientation)
         move = input("Please enter a move.\nExample: e2xe4.\n$ ")
+        while len(move) != 5:
+            Draw.draw(board, orientation)
+            move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         old_board = copy.deepcopy(board)
         new_board = ManipulateBoard.move_piece(board=board, move=move, orientation=orientation)
         if old_board != new_board:
@@ -41,8 +44,9 @@ def pass_and_play():
 
 
 def play_against_bot(bot):
+    move = ''
     user_choice = input("Play White or black?\n[1] White\n[2] Black\n$ ")
-    bypass = True if int(bot) == 2 or 3 else False
+    bypass = False
     match user_choice:
         case "1":
             user_orientation = "White"
@@ -55,12 +59,13 @@ def play_against_bot(bot):
         "move": ""
     }
     while True:
+        bypass = False
         playing = "White" if turn == 1 else "Black"
         Draw.draw(board=board, orientation=user_orientation)
         if playing == user_orientation:
-            bypass = False
             print(bot_move["quote"])
-            move = input("Please enter a move.\nExample: e2xe4.\n$ ")
+            while len(move) != 5:
+                move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         else:
             bypass = True if int(bot) == 2 or 3 else False
             if bot == "1":
@@ -76,6 +81,7 @@ def play_against_bot(bot):
             board = new_board
             os.system("cls" if os.name == "nt" else "clear")
             turn *= -1
+        move = ''
         ManipulateBoard.saver(data=board)
 
 if __name__ == "__main__":
