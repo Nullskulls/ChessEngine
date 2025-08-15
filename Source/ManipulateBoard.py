@@ -145,6 +145,18 @@ def move_piece(move, board, orientation, bypass = False):
         raise Exception("Invalid arguments")
     return board
 
+def invalid_input(move):
+    if (len(move) != 5):
+        return True
+    try:
+        int(move[1])
+        int(move[4])
+    except:
+        return True
+    if not (ord(move[0]) >= ord('a') and ord(move[0]) <= ord('h')):
+        return True
+    return False
+
 
 if __name__ == "__main__":
     #quick test

@@ -16,7 +16,7 @@ def main():
         case "1":
             pass_and_play()
         case "2":
-            bot = input("Which bot would you like to play?\n[1] Sir Meowzers.\n[2] Miss Whiskers.\n[3] Count Catstein\n$ ")
+            bot = input("Which bot would you like to play?\n[1] Sir Meowzers.\n *Sir meowzers may or may not slip fur in your tea :)\n[2] Miss Whiskers.\n *She doesn't know how to play so she may cheat...\n[3] Count Catstein\n *Sometimes he chooses to play by the rules sometimes not can you win against him?\n$ ")
             play_against_bot(bot)
 
 def pass_and_play():
@@ -31,7 +31,7 @@ def pass_and_play():
             raise Exception("Unexpected error occurred please try again")
         Draw.draw(board, orientation)
         move = input("Please enter a move.\nExample: e2xe4.\n$ ")
-        while len(move) != 5:
+        while ManipulateBoard.invalid_input(move):
             Draw.draw(board, orientation)
             move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         old_board = copy.deepcopy(board)
@@ -64,7 +64,7 @@ def play_against_bot(bot):
         Draw.draw(board=board, orientation=user_orientation)
         if playing == user_orientation:
             print(bot_move["quote"])
-            while len(move) != 5:
+            while ManipulateBoard.invalid_input(move):
                 move = input("Please enter a move.\nExample: e2xe4.\n$ ")
         else:
             bypass = True if int(bot) == 2 or 3 else False
